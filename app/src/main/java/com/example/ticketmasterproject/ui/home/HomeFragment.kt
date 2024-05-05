@@ -73,7 +73,7 @@ class HomeFragment : Fragment() {
         val ticketmasterAPI = retrofit.create(TicketmasterService::class.java)
 
         root.findViewById<Button>(R.id.search).setOnClickListener {
-            //hideKeyboard()
+            hideKeyboard(root)
             val city = root.findViewById<EditText>(R.id.cityEdit).text.toString()
             val classification = root.findViewById<EditText>(R.id.eventEdit).text.toString()
             var message = ""
@@ -118,7 +118,10 @@ class HomeFragment : Fragment() {
 }
 
 
-
+private fun hideKeyboard(view: View) {
+    val inputMethodManager = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+}
 
 fun APICall (adapter: EventsAdapter, ticketmasterAPI: TicketmasterService, eventList: ArrayList<Event>, city : String, classification: String, view: View){
     ticketmasterAPI.getCityAndSizeInfo(city, 20, "0hPuEKvfA0iuFANdUQfAWlj8kbpjmvE9", classification, "date,asc").enqueue(object : Callback<Data> {
