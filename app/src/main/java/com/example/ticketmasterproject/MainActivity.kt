@@ -23,45 +23,6 @@ import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
-    fun hideKeyboard() {
-        val i = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        var view = currentFocus
-        if (view == null) {
-            view = View(this)
-        }
-        i.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
-    fun APICall (adapter: EventsAdapter, ticketmasterAPI: TicketmasterService, eventList: ArrayList<Event>, city : String, classification: String){
-        ticketmasterAPI.getCityAndSizeInfo(city, 20, "0hPuEKvfA0iuFANdUQfAWlj8kbpjmvE9", classification, "date,asc").enqueue(object : Callback<Data> {
-
-
-            override fun onResponse(call: Call<Data>, response: Response<Data>) {
-                Log.d(TAG, "onResponse: $response")
-
-                val body = response.body()
-                if (body == null) {
-                    Log.w(TAG, "Valid response was not received")
-                    return
-                }
-                val embeddedData = body._embedded
-                if (embeddedData == null || body == null) {
-                    findViewById<TextView>(R.id.noEventsText).visibility = View.VISIBLE
-                }else {
-                    findViewById<TextView>(R.id.noEventsText).visibility = View.INVISIBLE
-                    eventList.addAll(body._embedded.events)
-                    adapter.notifyDataSetChanged()
-                }
-
-            }
-
-            override fun onFailure(call: Call<Data>, t: Throwable) {
-                Log.d(TAG, "onFailure : $t")
-            }
-
-        })
-    }
-
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navView: BottomNavigationView = binding.navView
+
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
