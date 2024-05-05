@@ -1,11 +1,13 @@
 package com.example.ticketmasterproject
 
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -21,9 +23,17 @@ import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
+    fun hideKeyboard() {
+        val i = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        var view = currentFocus
+        if (view == null) {
+            view = View(this)
+        }
+        i.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
     fun APICall (adapter: EventsAdapter, ticketmasterAPI: TicketmasterService, eventList: ArrayList<Event>, city : String, classification: String){
-        ticketmasterAPI.getCityAndSizeInfo(city, 20, "0hPuEKvfA0iuFANdUQfAWlj8kbpjmvE9", classification, "date,asc").enqueue(object :
-            Callback<Data> {
+        ticketmasterAPI.getCityAndSizeInfo(city, 20, "0hPuEKvfA0iuFANdUQfAWlj8kbpjmvE9", classification, "date,asc").enqueue(object : Callback<Data> {
 
 
             override fun onResponse(call: Call<Data>, response: Response<Data>) {

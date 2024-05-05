@@ -69,7 +69,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:backgroundTint="#235BBD"
-        android:onClick="APICall"
         android:text="Search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
