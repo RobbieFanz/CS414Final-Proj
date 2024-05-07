@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "850040839364",
+    "project_id": "cs414finalproj",
+    "storage_bucket": "cs414finalproj.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850040839364:android:a94f156d6b837564697d91",
+        "android_client_info": {
+          "package_name": "com.example.ticketmasterproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQv2ILyGQECAntHam9WWoYCpYLhLEhbkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

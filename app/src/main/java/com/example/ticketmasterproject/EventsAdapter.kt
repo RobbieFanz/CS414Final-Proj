@@ -44,6 +44,14 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.event_layout, parent, false)
         return MyViewHolder(view)
+
+        val holder = MyViewHolder(view)
+
+        holder.urlButton.setOnClickListener {
+            val position = holder.adapterPosition
+            val currentItem = events[position]
+            loadURLButton(holder.itemView, currentItem.url)
+        }
     }
 
 
@@ -54,9 +62,7 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
         holder.venue.text = currentItem._embedded.venues.get(0).name
         holder.date.text = "${currentItem.dates.start.localDate} @${parseTime(currentItem.dates.start.localTime)}"
         holder.address.text = "${currentItem._embedded.venues.get(0).address.line1}, ${currentItem._embedded.venues.get(0).city.name}, ${currentItem._embedded.venues.get(0).state.name}"
-        holder.urlButton.setOnClickListener {
-            loadURLButton(holder.itemView, currentItem.url)
-        }
+
         if(currentItem.priceRanges == null){
             holder.price.text =""
         }else {

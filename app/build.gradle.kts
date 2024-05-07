@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -39,6 +41,10 @@ android {
 }
 
 dependencies {
+
+    implementation("com.google.firebase:firebase-bom:32.8.0")
+    // Import Firestore
+    implementation("com.google.firebase:firebase-firestore:24.11.0")
 
     //gson
     implementation("com.google.code.gson:gson:2.10.1")
