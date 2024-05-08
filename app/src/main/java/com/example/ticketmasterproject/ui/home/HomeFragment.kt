@@ -32,7 +32,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class HomeFragment : Fragment() {
 
-
     private var _binding: FragmentHomeBinding? = null
 
     // This property is only valid between onCreateView and
@@ -47,7 +46,8 @@ class HomeFragment : Fragment() {
 
 
     ): View {
-        var db = FirebaseFirestore.getInstance()
+
+
 
 
         val homeViewModel =
@@ -74,6 +74,7 @@ class HomeFragment : Fragment() {
             .build()
 
         val ticketmasterAPI = retrofit.create(TicketmasterService::class.java)
+
 
         root.findViewById<Button>(R.id.search).setOnClickListener {
             hideKeyboard(root)

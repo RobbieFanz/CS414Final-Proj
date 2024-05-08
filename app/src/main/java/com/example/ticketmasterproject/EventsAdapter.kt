@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.firestore.FirebaseFirestore
 
 fun loadURLButton (view: View, url: String) {
     val browserIntent = Intent(Intent.ACTION_VIEW)
@@ -31,6 +32,7 @@ fun parseTime(time: String): String {
 }
 class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter<EventsAdapter.MyViewHolder>() {
 
+
     inner class MyViewHolder (itemView: View): RecyclerView.ViewHolder (itemView) {
         val name = itemView.findViewById<TextView>(R.id.eventName)
         val address = itemView.findViewById<TextView>(R.id.eventAddress)
@@ -41,6 +43,24 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
             loadURLButton(itemView, events[layoutPosition].url)
         }
         val price = itemView.findViewById<TextView>(R.id.price)
+
+        val db = FirebaseFirestore.getInstance()
+        val addBtn = itemView.findViewById<Button>(R.id.add).setOnClickListener{
+            val event = hashMapOf(
+                "name" to name.text.toString(),
+                "address" to address.text.toString(),
+                "date" to date.text.toString(),
+                "venue" to venue.text.toString(),
+                //when I put events[layoutPosition] into a variable it would crash the app
+                "thumbnail" to events[layoutPosition].images.maxByOrNull {
+                    it.width * it.height
+                }
+            )
+
+            val events = db.collection("events")
+            val documentId = events.document().id
+            events.document(documentId).set(event)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
