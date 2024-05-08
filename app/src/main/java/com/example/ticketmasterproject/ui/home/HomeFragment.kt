@@ -23,12 +23,12 @@ import com.example.ticketmasterproject.EventsAdapter
 import com.example.ticketmasterproject.R
 import com.example.ticketmasterproject.TicketmasterService
 import com.example.ticketmasterproject.databinding.FragmentHomeBinding
+import com.google.firebase.firestore.FirebaseFirestore
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 
 class HomeFragment : Fragment() {
 
@@ -47,6 +47,9 @@ class HomeFragment : Fragment() {
 
 
     ): View {
+        var db = FirebaseFirestore.getInstance()
+
+
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
@@ -78,23 +81,23 @@ class HomeFragment : Fragment() {
             val classification = root.findViewById<EditText>(R.id.eventEdit).text.toString()
             var message = ""
             var bool = true
-            if(city == "" && classification == ""){
+            if (city == "" && classification == "") {
                 message = "Please enter a city and an event type"
 
-            } else if (city == ""){
+            } else if (city == "") {
                 message = "Please enter a city"
 
-            }else if (classification == ""){
+            } else if (classification == "") {
                 message = "please enter an event type"
 
-            }else{
+            } else {
                 eventList.clear()
                 // I know there are two of these one after the clear and one after the add but it best like this putting this after the apicall function was not working consistantly
                 adapter.notifyDataSetChanged()
                 APICall(adapter, ticketmasterAPI, eventList, city, classification, root)
                 bool = false
             }
-            if(bool) {
+            if (bool) {
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Warning")
                 builder.setMessage(message)
@@ -115,41 +118,55 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-}
 
 
-private fun hideKeyboard(view: View) {
-    val inputMethodManager = view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-}
+    private fun hideKeyboard(view: View) {
+        val inputMethodManager =
+            view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
 
-fun APICall (adapter: EventsAdapter, ticketmasterAPI: TicketmasterService, eventList: ArrayList<Event>, city : String, classification: String, view: View){
-    ticketmasterAPI.getCityAndSizeInfo(city, 20, "0hPuEKvfA0iuFANdUQfAWlj8kbpjmvE9", classification, "date,asc").enqueue(object : Callback<Data> {
+    fun APICall(
+        adapter: EventsAdapter,
+        ticketmasterAPI: TicketmasterService,
+        eventList: ArrayList<Event>,
+        city: String,
+        classification: String,
+        view: View
+    ) {
+        ticketmasterAPI.getCityAndSizeInfo(
+            city,
+            20,
+            "0hPuEKvfA0iuFANdUQfAWlj8kbpjmvE9",
+            classification,
+            "date,asc"
+        ).enqueue(object : Callback<Data> {
 
 
-        override fun onResponse(call: Call<Data>, response: Response<Data>) {
-            Log.d(ContentValues.TAG, "onResponse: $response")
+            override fun onResponse(call: Call<Data>, response: Response<Data>) {
+                Log.d(ContentValues.TAG, "onResponse: $response")
 
-            val body = response.body()
-            if (body == null) {
-                Log.w(ContentValues.TAG, "Valid response was not received")
-                return
+                val body = response.body()
+                if (body == null) {
+                    Log.w(ContentValues.TAG, "Valid response was not received")
+                    return
+                }
+                val embeddedData = body._embedded
+                if (embeddedData == null || body == null) {
+                    view.findViewById<TextView>(R.id.noEventsText).visibility = View.VISIBLE
+                } else {
+                    view.findViewById<TextView>(R.id.noEventsText).visibility = View.INVISIBLE
+                    eventList.addAll(body._embedded.events)
+                    adapter.notifyDataSetChanged()
+                }
+
             }
-            val embeddedData = body._embedded
-            if (embeddedData == null || body == null) {
-                view.findViewById<TextView>(R.id.noEventsText).visibility = View.VISIBLE
-            }else {
-                view.findViewById<TextView>(R.id.noEventsText).visibility = View.INVISIBLE
-                eventList.addAll(body._embedded.events)
-                adapter.notifyDataSetChanged()
+
+            override fun onFailure(call: Call<Data>, t: Throwable) {
+                Log.d(ContentValues.TAG, "onFailure : $t")
             }
 
-        }
-
-        override fun onFailure(call: Call<Data>, t: Throwable) {
-            Log.d(ContentValues.TAG, "onFailure : $t")
-        }
-
-    })
+        })
+    }
 }
 

@@ -37,21 +37,15 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
         val date = itemView.findViewById<TextView>(R.id.eventDate)
         val venue = itemView.findViewById<TextView>(R.id.eventVenue)
         val thumbnail = itemView.findViewById<ImageView>(R.id.imageView)
-        val urlButton = itemView.findViewById<Button>(R.id.seeTickets)
+        val urlButton = itemView.findViewById<Button>(R.id.seeTickets).setOnClickListener {
+            loadURLButton(itemView, events[layoutPosition].url)
+        }
         val price = itemView.findViewById<TextView>(R.id.price)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.event_layout, parent, false)
         return MyViewHolder(view)
-
-        val holder = MyViewHolder(view)
-
-        holder.urlButton.setOnClickListener {
-            val position = holder.adapterPosition
-            val currentItem = events[position]
-            loadURLButton(holder.itemView, currentItem.url)
-        }
     }
 
 
