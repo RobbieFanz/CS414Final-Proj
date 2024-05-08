@@ -9,6 +9,7 @@ data class EmbeddedData(
 )
 
 data class Event(
+    val id: String,
     val name: String,
     val address: String,
     val dates: Dates,

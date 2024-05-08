@@ -1,7 +1,9 @@
 package com.example.ticketmasterproject
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,22 +47,49 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
         val price = itemView.findViewById<TextView>(R.id.price)
 
         val db = FirebaseFirestore.getInstance()
-        val addBtn = itemView.findViewById<Button>(R.id.add).setOnClickListener{
-            val event = hashMapOf(
-                "name" to name.text.toString(),
-                "address" to address.text.toString(),
-                "date" to date.text.toString(),
-                "venue" to venue.text.toString(),
-                //when I put events[layoutPosition] into a variable it would crash the app
-                "thumbnail" to events[layoutPosition].images.maxByOrNull {
-                    it.width * it.height
-                }
-            )
-
+        //maybe put some of these into functions
+        val addBtn = itemView.findViewById<Button>(R.id.add).setOnClickListener {
+            var inDatabase = true
+            val currentItem = events[layoutPosition]
+            val documentId = currentItem.id
             val events = db.collection("events")
-            val documentId = events.document().id
-            events.document(documentId).set(event)
+            var btnText = ""
+
+            val docRef = events.document(documentId)
+            docRef.get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        inDatabase = true
+                    } else {
+                        inDatabase = false
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "get failed with ", exception)
+                }
+            if (inDatabase) {
+                docRef.delete()
+                btnText = "added"
+
+            } else {
+                val event = hashMapOf(
+                    "name" to name.text.toString(),
+                    "address" to address.text.toString(),
+                    "date" to date.text.toString(),
+                    "venue" to venue.text.toString(),
+                    //when I put events[layoutPosition] into a variable it would crash the app
+                    "thumbnail" to currentItem.images.maxByOrNull {
+                        it.width * it.height
+                    }
+                )
+                //id is set to ticketmaster event id so we can easily check if its already added
+                events.document(documentId).set(event)
+                btnText = "added"
+            }
+            itemView.findViewById<Button>(R.id.add).text = btnText//take this out of the onclick
         }
+
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
