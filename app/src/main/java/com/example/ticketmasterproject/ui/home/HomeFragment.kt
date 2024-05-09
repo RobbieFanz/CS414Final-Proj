@@ -32,8 +32,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class HomeFragment : Fragment() {
-    val currentUser = FirebaseAuth.getInstance().currentUser
-    val userDisplayName = currentUser?.displayName
+    val currentUser = FirebaseAuth.getInstance().currentUser!!
+    val userDisplayName = currentUser.displayName
     val nameArray = userDisplayName?.split(" ")
     var DisplayName = nameArray?.get(0)//only gets first name
 

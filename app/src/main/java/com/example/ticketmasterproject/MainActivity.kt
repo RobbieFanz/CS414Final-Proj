@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
         // Make sure to call finish() to remove this activity from the backstack, otherwise the user
         // would be able to go back to the MainActivity
-        finish()
+        
     }
 
 }
