@@ -78,15 +78,16 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
                 inDatabase=false
 
             } else {
+                val thumb = currentItem.images.maxBy {
+                    it.width * it.height
+                }
                 val event = hashMapOf(
                     "name" to name.text.toString(),
                     "address" to address.text.toString(),
                     "date" to date.text.toString(),
                     "venue" to venue.text.toString(),
                     //when I put events[layoutPosition] into a variable it would crash the app
-                    "thumbnail" to currentItem.images.maxByOrNull {
-                        it.width * it.height
-                    },
+                    "thumbnail" to thumb.url,
                     "url" to currentItem.url,
                     "prices" to price.text.toString(),
                     "eventId" to currentItem.id,

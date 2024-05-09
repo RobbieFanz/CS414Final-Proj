@@ -8,6 +8,16 @@ data class EmbeddedData(
     val events: List<Event>
 )
 
+data class firebaseEvent(
+    val eventId: String,
+    val name: String,
+    val address: String,
+    val date: String,
+    val venue: String,
+    val thumbnail: String,
+    val url: String,
+    val prices: String
+)
 data class Event(
     val id: String,
     val name: String,
