@@ -64,17 +64,6 @@ class firebaseAdapter(private val eventsInDatabase: ArrayList<firebaseEvent>) : 
 
         holder.addText.text = "remove"
 
-//        var btnText = "unmark"
-//        holder.inDatabase=false
-//        eventsInDatabase.whereEqualTo("eventId",currentItem.id).whereEqualTo("userId", userId).get()
-//            .addOnSuccessListener { documents ->
-//                // Iterate all the documents
-//                if (!documents.isEmpty()) {
-//                    btnText = "added"
-//                    holder.inDatabase=true
-//                }
-//                holder.addText.text = btnText
-//            }
 
     }
 
