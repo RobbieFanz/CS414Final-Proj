@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.ticketmasterproject.databinding.ActivityMainBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.properties.Delegates
@@ -41,6 +42,8 @@ fun parseTime(time: String): String {
 class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter<EventsAdapter.MyViewHolder>() {
     val db = FirebaseFirestore.getInstance()
     val eventsInDatabase = db.collection("events")
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val userId = currentUser?.uid
 
 
     inner class MyViewHolder (itemView: View): RecyclerView.ViewHolder (itemView) {
@@ -86,7 +89,8 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
                     },
                     "url" to currentItem.url,
                     "prices" to price.text.toString(),
-                    "eventId" to currentItem.id
+                    "eventId" to currentItem.id,
+                    "userID" to userId
                 )
                 val documentId = eventsInDatabase.document().id
                 eventsInDatabase.document(documentId).set(event)
@@ -132,7 +136,7 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
         }
         var btnText = "add"
         holder.inDatabase=false
-        eventsInDatabase.whereEqualTo("eventId",currentItem.id).get()
+        eventsInDatabase.whereEqualTo("eventId",currentItem.id).whereEqualTo("userID", userId).get()
             .addOnSuccessListener { documents ->
                 // Iterate all the documents
                 if (!documents.isEmpty()) {

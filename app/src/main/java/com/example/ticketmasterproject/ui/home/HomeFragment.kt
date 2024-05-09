@@ -23,6 +23,7 @@ import com.example.ticketmasterproject.EventsAdapter
 import com.example.ticketmasterproject.R
 import com.example.ticketmasterproject.TicketmasterService
 import com.example.ticketmasterproject.databinding.FragmentHomeBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,6 +32,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class HomeFragment : Fragment() {
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val userDisplayName = currentUser?.displayName
+    val nameArray = userDisplayName?.split(" ")
+    var DisplayName = nameArray?.get(0)//only gets first name
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -75,7 +80,7 @@ class HomeFragment : Fragment() {
 
         val ticketmasterAPI = retrofit.create(TicketmasterService::class.java)
 
-
+        root.findViewById<TextView>(R.id.welcomeText).text = "Hello "+DisplayName+", Find tickets close to you"
         root.findViewById<Button>(R.id.search).setOnClickListener {
             hideKeyboard(root)
             val city = root.findViewById<EditText>(R.id.cityEdit).text.toString()

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "850040839364",
+    "project_id": "cs414finalproj",
+    "storage_bucket": "cs414finalproj.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850040839364:android:a94f156d6b837564697d91",
+        "android_client_info": {
+          "package_name": "com.example.ticketmasterproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "850040839364-0f4rfuhlv73njgo1lngeikb7moc0drhh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ticketmasterproject",
+            "certificate_hash": "b190c313443510a9a5892c1e6224fc3764c9e116"
+          }
+        },
+        {
+          "client_id": "850040839364-5jtmfti0hqd63lag3v1n6bo0md4a22i6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQv2ILyGQECAntHam9WWoYCpYLhLEhbkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "850040839364-5jtmfti0hqd63lag3v1n6bo0md4a22i6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

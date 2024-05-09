@@ -46,6 +46,8 @@ dependencies {
     // Import Firestore
     implementation("com.google.firebase:firebase-firestore:24.11.0")
 
+    implementation ("com.firebaseui:firebase-ui-auth:7.2.0")
+
     //gson
     implementation("com.google.code.gson:gson:2.10.1")
     // Retrofit
