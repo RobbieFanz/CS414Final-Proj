@@ -12,7 +12,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.ticketmasterproject.databinding.ActivityMainBinding
+import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.properties.Delegates
+
 
 fun loadURLButton (view: View, url: String) {
     val browserIntent = Intent(Intent.ACTION_VIEW)
@@ -32,10 +36,15 @@ fun parseTime(time: String): String {
     return "$hour:${timeArray[1]}$amPm"
 
 }
+
+
 class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter<EventsAdapter.MyViewHolder>() {
+    val db = FirebaseFirestore.getInstance()
+    val eventsInDatabase = db.collection("events")
 
 
     inner class MyViewHolder (itemView: View): RecyclerView.ViewHolder (itemView) {
+        var inDatabase = false
         val name = itemView.findViewById<TextView>(R.id.eventName)
         val address = itemView.findViewById<TextView>(R.id.eventAddress)
         val date = itemView.findViewById<TextView>(R.id.eventDate)
@@ -46,30 +55,24 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
         }
         val price = itemView.findViewById<TextView>(R.id.price)
 
-        val db = FirebaseFirestore.getInstance()
-        //maybe put some of these into functions
-        val addBtn = itemView.findViewById<Button>(R.id.add).setOnClickListener {
-            var inDatabase = true
-            val currentItem = events[layoutPosition]
-            val documentId = currentItem.id
-            val events = db.collection("events")
-            var btnText = ""
 
-            val docRef = events.document(documentId)
-            docRef.get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        inDatabase = true
-                    } else {
-                        inDatabase = false
+        val addText = itemView.findViewById<Button>(R.id.add)
+        init {
+
+        }
+
+        val addBtn = itemView.findViewById<Button>(R.id.add).setOnClickListener {
+            val currentItem = events[layoutPosition]
+            var btnText = "add"
+            if (inDatabase) {
+                eventsInDatabase.whereEqualTo("eventId",currentItem.id).get().addOnSuccessListener{documents->
+                    for(document in documents){
+                        document.reference.delete()
                     }
                 }
-                .addOnFailureListener { exception ->
-                    Log.d(TAG, "get failed with ", exception)
-                }
-            if (inDatabase) {
-                docRef.delete()
-                btnText = "added"
+
+                btnText = "add"
+                inDatabase=false
 
             } else {
                 val event = hashMapOf(
@@ -80,15 +83,18 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
                     //when I put events[layoutPosition] into a variable it would crash the app
                     "thumbnail" to currentItem.images.maxByOrNull {
                         it.width * it.height
-                    }
+                    },
+                    "url" to currentItem.url,
+                    "prices" to price.text.toString(),
+                    "eventId" to currentItem.id
                 )
-                //id is set to ticketmaster event id so we can easily check if its already added
-                events.document(documentId).set(event)
+                val documentId = eventsInDatabase.document().id
+                eventsInDatabase.document(documentId).set(event)
                 btnText = "added"
+                inDatabase=true
             }
-            itemView.findViewById<Button>(R.id.add).text = btnText//take this out of the onclick
+            addText.text = btnText
         }
-
 
     }
 
@@ -124,6 +130,17 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
                 .load(highestQualityImage.url)
                 .into(holder.thumbnail)
         }
+        var btnText = "add"
+        holder.inDatabase=false
+        eventsInDatabase.whereEqualTo("eventId",currentItem.id).get()
+            .addOnSuccessListener { documents ->
+                // Iterate all the documents
+                if (!documents.isEmpty()) {
+                    btnText = "added"
+                    holder.inDatabase=true
+                }
+                holder.addText.text = btnText
+            }
 
     }
 
