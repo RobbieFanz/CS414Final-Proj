@@ -60,13 +60,10 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
 
 
         val addText = itemView.findViewById<Button>(R.id.add)
-        init {
-
-        }
 
         val addBtn = itemView.findViewById<Button>(R.id.add).setOnClickListener {
             val currentItem = events[layoutPosition]
-            var btnText = "add"
+            var btnText = "mark"
             if (inDatabase) {
                 eventsInDatabase.whereEqualTo("eventId",currentItem.id).whereEqualTo("userId",userId).get().addOnSuccessListener{documents->
                     for(document in documents){
@@ -74,7 +71,7 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
                     }
                 }
 
-                btnText = "add"
+                btnText = "mark"
                 inDatabase=false
 
             } else {
@@ -95,7 +92,7 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
                 )
                 val documentId = eventsInDatabase.document().id
                 eventsInDatabase.document(documentId).set(event)
-                btnText = "added"
+                btnText = "marked"
                 inDatabase=true
             }
             addText.text = btnText
@@ -135,13 +132,13 @@ class EventsAdapter(private val events: ArrayList<Event>) : RecyclerView.Adapter
                 .load(highestQualityImage.url)
                 .into(holder.thumbnail)
         }
-        var btnText = "add"
+        var btnText = "mark"
         holder.inDatabase=false
         eventsInDatabase.whereEqualTo("eventId",currentItem.id).whereEqualTo("userId", userId).get()
             .addOnSuccessListener { documents ->
                 // Iterate all the documents
                 if (!documents.isEmpty()) {
-                    btnText = "added"
+                    btnText = "marked"
                     holder.inDatabase=true
                 }
                 holder.addText.text = btnText

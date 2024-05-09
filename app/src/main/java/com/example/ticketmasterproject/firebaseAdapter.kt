@@ -13,13 +13,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class firebaseAdapter(private val eventsInDatabase: ArrayList<firebaseEvent>) : RecyclerView.Adapter<firebaseAdapter.MyViewHolder1>() {
     val db = FirebaseFirestore.getInstance()
-    //val eventsInDatabase = db.collection("events")
-    val currentUser = FirebaseAuth.getInstance().currentUser
-    val userId = currentUser?.uid
+    val eventCollection = db.collection("events")
+    val currentUser = FirebaseAuth.getInstance().currentUser!!
+    val userId = currentUser.uid
 
 
     inner class MyViewHolder1 (itemView: View): RecyclerView.ViewHolder (itemView) {
-        var inDatabase = true
         val name = itemView.findViewById<TextView>(R.id.eventName)
         val address = itemView.findViewById<TextView>(R.id.eventAddress)
         val date = itemView.findViewById<TextView>(R.id.eventDate)
@@ -29,15 +28,17 @@ class firebaseAdapter(private val eventsInDatabase: ArrayList<firebaseEvent>) : 
             loadURLButton(itemView, eventsInDatabase[adapterPosition].url)
         }
         val price = itemView.findViewById<TextView>(R.id.price)
-
-
         val addText = itemView.findViewById<Button>(R.id.add)
-        init {
-
-        }
 
         val addBtn = itemView.findViewById<Button>(R.id.add).setOnClickListener {
-
+            eventCollection.whereEqualTo("eventId",eventsInDatabase[adapterPosition].eventId).whereEqualTo("userId",userId).get().addOnSuccessListener{documents->
+                for(document in documents){
+                    document.reference.delete()
+                }
+                val selectedItem = adapterPosition
+                eventsInDatabase.removeAt(selectedItem)
+                notifyItemRemoved(selectedItem)
+            }
         }
 
     }
@@ -57,10 +58,11 @@ class firebaseAdapter(private val eventsInDatabase: ArrayList<firebaseEvent>) : 
         holder.price.text = currentItem.prices
 
         val context = holder.itemView.context
+        Glide.with(context)
+            .load(currentItem.thumbnail)
+            .into(holder.thumbnail)
 
-            Glide.with(context)
-                .load(currentItem.thumbnail)
-                .into(holder.thumbnail)
+        holder.addText.text = "remove"
 
 //        var btnText = "unmark"
 //        holder.inDatabase=false

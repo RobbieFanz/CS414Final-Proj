@@ -64,16 +64,6 @@ class NotificationsFragment : Fragment() {
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
             }
 
-
-
-
-
-
-
-
-
-
-
         return root
     }
 
